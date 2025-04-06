@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SkillSync AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #f0f2f5, #d9e2ec);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      padding: 2rem 0 0.5rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.7s ease-in-out;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      color: #34495e;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    textarea, input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      padding: 0.75rem 2rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 10px;
+      background: #ecf0f1;
+      color: #2c3e50;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>SkillSync AI</h1>
+  <div class="container">
+    <div class="section">
+      <h2>Paste Job Description and Resume</h2>
+      <label for="jd_text">Job Description</label>
+      <textarea id="jd_text" rows="5" placeholder="Paste the job description here..."></textarea>
+      <label for="cv_text">Resume</label>
+      <textarea id="cv_text" rows="5" placeholder="Paste your resume here..."></textarea>
+      <button type="button" onclick="submitText()">Submit Text</button>
+    </div>
+
+    <div class="section">
+      <h2>Or Upload PDF Files</h2>
+      <label for="jd_file">Job Description PDF</label>
+      <input type="file" id="jd_file" accept="application/pdf">
+      <label for="cv_file">Resume PDF</label>
+      <input type="file" id="cv_file" accept="application/pdf">
+      <button type="button" onclick="submitPDF()">Submit PDFs</button>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    async function submitText() {
+      const jd_text = document.getElementById('jd_text').value;
+      const cv_text = document.getElementById('cv_text').value;
+
+      const res = await fetch('http://localhost:8000/match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jd_text, cv_text })
+      });
+
+      const data = await res.json();
+      document.getElementById('result').innerText = data.status === 'Shortlisted'
+        ? '✅ Yes, Congrats you made it!'
+        : '❌ Sorry, you are not selected.';
+    }
+
+    async function submitPDF() {
+      const jd_file = document.getElementById('jd_file').files[0];
+      const cv_file = document.getElementById('cv_file').files[0];
+      const formData = new FormData();
+      formData.append('jd_file', jd_file);
+      formData.append('cv_file', cv_file);
+
+      const res = await fetch('http://localhost:8000/match/pdf', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      document.getElementById('result').innerText = data.status === 'Shortlisted'
+        ? '✅ Yes, Congrats you made it!'
+        : '❌ Sorry, you are not selected.';
+    }
+  </script>
+</body>
+</html>
