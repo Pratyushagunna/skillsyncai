@@ -1,8 +1,9 @@
-fastapi==0.109.1
-uvicorn==0.27.0
-python-multipart==0.0.9
-openai==1.12.0
-spacy==3.7.4
-scikit-learn==1.3.0
-python-dotenv==1.0.0
+fastapi
+uvicorn
+spacy
 pdfplumber
+python-multipart
+scikit-learn
+openai
+python-dotenv
+https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl
