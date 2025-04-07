@@ -13,7 +13,6 @@ try:
     nlp = spacy.load("en_core_web_lg")
 except:
     import spacy.cli
-    spacy.cli.download("en_core_web_lg")
     nlp = spacy.load("en_core_web_lg")
 
 def init_db():
